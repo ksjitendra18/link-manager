@@ -13,6 +13,7 @@ import { useEffect } from "react";
 
 import useSWR from "swr";
 import Loading from "../components/loading";
+import copyToClipboard from "../utils/copyToClipboard";
 import { db } from "../utils/firebase";
 import { useUserStore } from "../utils/userStore";
 
@@ -67,7 +68,7 @@ const AllLinks = () => {
       <h2 className="text-3xl font-bold">All Links</h2>
 
       {links !== undefined ? (
-        <div className="flex overflow-x-auto mt-10 bg-gray-800  text-white">
+        <div className="flex overflow-x-auto rounded-md mt-10 bg-gray-800  text-white">
           <div className=" flex  w-full">
             <div className="flex-1 ">
               <div className="h-[50px] flex items-center bg-[#374151] p-5">
@@ -119,7 +120,15 @@ const AllLinks = () => {
                     className=" min-w-max  mr-2 link-item border-b-2  border-gray-700 my-3 pb-3"
                   >
                     <div className="flex gap-5 mr-5 cursor-pointer">
-                      <p>Copy</p>
+                      <p
+                        onClick={() =>
+                          copyToClipboard(
+                            `${window.location.origin}/link/${link.shortUrl}`
+                          )
+                        }
+                      >
+                        Copy
+                      </p>
                       <p>Edit</p>
                       <p
                         onClick={() => {

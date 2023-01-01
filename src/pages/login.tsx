@@ -72,13 +72,15 @@ const Login = () => {
       router.push("/");
     } else {
       return (
-        <div className="w-full mt-10 flex justify-center h-[500px]">
+        <div className="mx-5 mt-10 flex justify-center h-[500px]">
           <Head>
             <title>Login</title>
           </Head>
-          <div className="form p-8 px-16 rounded-[6px] flex justify-center  flex-col bg-primary text-white  max-w-[800px] m-auto ">
-            <h2 className="font-bold text-3xl">Login </h2>
-            <form onSubmit={handleLogin}>
+          <div className="  md:max-w-[800px]  form p-6 md:p-8 md:px-16 rounded-[6px] flex justify-center  flex-col bg-primary text-white  m-auto ">
+            <h2 className="font-bold text-3xl text-center md:text-left">
+              Login{" "}
+            </h2>
+            <form onSubmit={handleLogin} className="w-[90%]">
               <div className="mb-6 mt-10">
                 <label htmlFor="emailinput" className="block text-sm mb-1">
                   Email
@@ -89,7 +91,7 @@ const Login = () => {
                   placeholder="john@gmail.com"
                   required
                   id="emailinput"
-                  className="w-[300px] text-black px-2 py-1  h-[35px] rounded-[6px]"
+                  className=" text-black px-2 py-1  h-[35px] rounded-[6px]"
                   ref={emailRef}
                 />
               </div>
@@ -104,11 +106,11 @@ const Login = () => {
                   required
                   id="passwordinput"
                   placeholder="6+ characters"
-                  className="w-[300px] text-black px-2 py-1 h-[35px] rounded-[6px]"
+                  className=" text-black px-2 py-1 h-[35px] rounded-[6px]"
                   ref={passwordRef}
                 />
               </div>
-              <button className="bg-[#3264e2] px-5 py-2 font-bold rounded-lg">
+              <button className="bg-secondary px-5 py-2 font-bold rounded-lg">
                 Login
               </button>
             </form>

@@ -43,8 +43,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   console.log(context.query);
 
   const linkQuery: string | string[] = context.query.shortUrl!;
-  const name = "j";
 
+  console.log("links is", linkQuery);
   const docRef = doc(db, "links", linkQuery as string);
   const docSnap = await getDoc(docRef);
 

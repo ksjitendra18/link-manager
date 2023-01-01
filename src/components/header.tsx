@@ -20,7 +20,7 @@ const Header = () => {
         </Link>
       </div>
 
-      <nav>
+      <nav className="hidden md:block">
         <ul className="flex text-xl gap-5">
           <li>
             <Link href="/">Home</Link>{" "}

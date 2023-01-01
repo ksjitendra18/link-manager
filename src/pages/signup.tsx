@@ -78,9 +78,11 @@ const Signup = () => {
           <Head>
             <title>Signup</title>
           </Head>
-          <div className="form p-8 px-16 rounded-[6px] flex justify-center  flex-col bg-primary text-white  max-w-[800px] m-auto ">
-            <h2 className="font-bold text-3xl">Signup </h2>
-            <form onSubmit={handleSignup}>
+          <div className="  md:max-w-[800px]  form p-6 md:p-8 md:px-16 rounded-[6px] flex justify-center  flex-col bg-primary text-white  m-auto ">
+            <h2 className="font-bold text-3xl text-center md:text-left">
+              Signup{" "}
+            </h2>
+            <form onSubmit={handleSignup} className="w-[90%]">
               <div className="mb-6 mt-10 ">
                 <label htmlFor="nameinput" className="block text-sm mb-1">
                   Name
@@ -91,7 +93,7 @@ const Signup = () => {
                   placeholder="John"
                   required
                   id="nameinput"
-                  className="w-[300px] text-black px-2 py-1 h-[35px] rounded-[6px]"
+                  className=" text-black px-2 py-1 h-[35px] rounded-[6px]"
                   ref={nameRef}
                 />
               </div>
@@ -105,7 +107,7 @@ const Signup = () => {
                   placeholder="john@gmail.com"
                   required
                   id="emailinput"
-                  className="w-[300px] text-black px-2 py-1  h-[35px] rounded-[6px]"
+                  className=" text-black px-2 py-1  h-[35px] rounded-[6px]"
                   ref={emailRef}
                 />
               </div>
@@ -120,11 +122,11 @@ const Signup = () => {
                   required
                   id="passwordinput"
                   placeholder="6+ characters"
-                  className="w-[300px] text-black px-2 py-1 h-[35px] rounded-[6px]"
+                  className=" text-black px-2 py-1 h-[35px] rounded-[6px]"
                   ref={passwordRef}
                 />
               </div>
-              <button className="bg-[#3264e2] px-5 py-2 font-bold rounded-lg">
+              <button className="bg-secondary px-5 py-2 font-bold rounded-lg">
                 Signup
               </button>
             </form>
