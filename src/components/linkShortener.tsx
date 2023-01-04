@@ -1,9 +1,10 @@
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { customAlphabet } from "nanoid";
 import { useRouter } from "next/router";
-import React, { FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { db } from "../utils/firebase";
 import { useUserStore } from "../utils/userStore";
+import copyToClipboard from "../utils/copyToClipboard";
 
 const LinkShortener: React.FC = () => {
   const [generateUrl, setGenerateUrl] = useState<boolean>(false);
@@ -38,8 +39,13 @@ const LinkShortener: React.FC = () => {
     };
 
     try {
-      await setDoc(doc(db, userInfo!, shortUrlId), data);
-      await setDoc(doc(db, "links", shortUrlId), { ...data, userId: userInfo });
+      if (userInfo) {
+        await setDoc(doc(db, userInfo!, shortUrlId), data);
+      }
+      await setDoc(doc(db, "links", shortUrlId), {
+        ...data,
+        userId: userInfo || "guest",
+      });
     } catch (err: any) {
       console.log("error from create new link", err, err.message);
     }
@@ -85,15 +91,18 @@ const LinkShortener: React.FC = () => {
 
       {generateUrl ? (
         <div className="flex flex-col">
-          <div className="mt-10 flex items-center gap-5">
+          <div className="mt-10 flex flex-col md:flex-row items-center gap-2 md:gap-5">
             <h3 className="font-bold text-2xl ">Long URL: </h3>
-            <span className="text-2xl border-solid border-b-2 cursor-pointer border-secondary">
+            <span className="text-xl md:text-2xl border-solid border-b-2 cursor-pointer border-secondary">
               {longUrl}
             </span>
           </div>
-          <div className="mt-10 flex items-center gap-5">
+          <div className="mt-10 flex flex-col md:flex-row  items-center gap-2 md:gap-5">
             <h3 className="font-bold text-2xl ">Short URL: </h3>
-            <span className="text-2xl border-solid border-b-2 cursor-pointer border-secondary">
+            <span
+              className="text-xl md:text-2xl border-solid border-b-2 cursor-pointer border-secondary"
+              onClick={() => copyToClipboard(shortUrl!)}
+            >
               {shortUrl}
             </span>
           </div>

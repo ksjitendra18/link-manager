@@ -1,15 +1,34 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useUserStore } from "../utils/userStore";
 import { signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
 const Header = () => {
   const userInfo = useUserStore((state) => state.userInfo);
   const performLogout = useUserStore((state) => state.performLogout);
+  const [openNav, setOpenNav] = useState(false);
 
   const handleLogout = async () => {
     await signOut(auth);
     performLogout();
+  };
+
+  // just a custom ListItem component
+  interface ListItemProps {
+    children: React.ReactNode;
+    className?: string | undefined;
+  }
+  const ListItem = ({ className, children }: ListItemProps) => {
+    // return <li className={props.className}>{children}</li>;
+    console.log("props", className);
+    return (
+      <li
+        className={className ? className : undefined}
+        onClick={() => setOpenNav(false)}
+      >
+        {children}
+      </li>
+    );
   };
 
   return (
@@ -20,14 +39,11 @@ const Header = () => {
         </Link>
       </div>
 
-      <nav>
+      <nav className="hidden md:block">
         <ul className="flex text-xl gap-5">
           <li>
             <Link href="/">Home</Link>{" "}
           </li>
-          {/* <li>
-            <Link href="/links">Links</Link>
-          </li> */}
           {userInfo !== null ? (
             <>
               <li>
@@ -44,8 +60,59 @@ const Header = () => {
           )}
         </ul>
       </nav>
+
+      <div
+        className={`${
+          openNav ? "active" : ""
+        } hamburger  block md:hidden mt-1 cursor-pointer`}
+        onClick={() => {
+          setOpenNav((prev) => !prev);
+        }}
+      >
+        <span className="bar block w-[30px] h-[4px] bg-white "></span>
+        <span className="bar block w-[30px] mt-1 h-[4px] bg-white "></span>
+        <span className="bar block w-[30px] mt-1 h-[4px] bg-white "></span>
+      </div>
+
+      {openNav && (
+        <nav className="top-16 right-0 w-[100%] text-white absolute flex flex-col justify-center h-[300px] bg-secondary items-center md:hidden">
+          <ul className="flex flex-col items-center gap-5 ">
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>About</li>
+            {userInfo !== null ? (
+              <>
+                <li>
+                  <Link href="/links">Links</Link>
+                </li>
+                <li className="cursor-pointer" onClick={handleLogout}>
+                  Logout
+                </li>
+              </>
+            ) : (
+              // <li>
+              // </li>
+              <ListItem>
+                <Link href="/login">Login</Link>
+              </ListItem>
+            )}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 };
+
+// // just a custom ListItem component
+// interface ListItemProps {
+//   children: React.ReactNode;
+//   className?: string | undefined;
+// }
+// const ListItem = ({ className, children }: ListItemProps) => {
+//   // return <li className={props.className}>{children}</li>;
+//   console.log("props", className);
+//   return <li className={className ? className : undefined} onClick={()=> }>{children}</li>;
+// };
 
 export default Header;
