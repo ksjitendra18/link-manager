@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Loading from "../components/loading";
+import { FIREBASE_ERRORS } from "../utils/firebaseErrors";
 import { useUserStore } from "../utils/userStore";
 const Signup = () => {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -29,6 +30,9 @@ const Signup = () => {
 
   const handleSignup = async (event: FormEvent) => {
     event.preventDefault();
+    setError(false);
+    setErrorMsg("");
+
     const userName = nameRef.current!.value;
     const email = emailRef.current!.value;
     const password = passwordRef.current!.value;
@@ -42,9 +46,19 @@ const Signup = () => {
           password,
         }),
       });
-      const data = await res.json();
-      console.log("data", data);
-    } catch (e) {}
+      const signUpData = await res.json();
+      if (signUpData.status === 500) {
+        setError(true);
+        setErrorMsg(signUpData.error);
+        return;
+      }
+      setupUserInfo(signUpData.userId);
+      router.push("/");
+    } catch (e) {
+      console.log("error from signup");
+      setError(true);
+      setErrorMsg("Their is some error. Please try again later");
+    }
 
     nameRef.current!.value = "";
     emailRef.current!.value = "";
@@ -55,7 +69,7 @@ const Signup = () => {
     return (
       <div className="mt-10 md:mt-40">
         <Head>
-          <title>Login</title>
+          <title>Signup</title>
         </Head>
         <Loading />
       </div>
@@ -121,6 +135,13 @@ const Signup = () => {
                 Signup
               </button>
             </form>
+
+            {error ? (
+              <p className="error mt-6 rounded-lg bg-red-600 px-5 py-2 font-bold">
+                {FIREBASE_ERRORS[errorMsg as keyof typeof FIREBASE_ERRORS] ||
+                  errorMsg}
+              </p>
+            ) : null}
 
             <p className="mt-7">
               Already have an account?{" "}

@@ -28,7 +28,7 @@ export default async function handler(
       createdAt: serverTimestamp(),
     });
     res.status(200).json({ userId: userCredential.user.uid });
-  } catch (error) {
-    res.status(500).json(error);
+  } catch (error: any) {
+    res.status(200).json({ status: 500, error: error.code });
   }
 }

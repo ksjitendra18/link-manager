@@ -22,6 +22,6 @@ export default async function handler(
     );
     res.status(200).json({ userId: userCredential.user.uid });
   } catch (error: any) {
-    res.status(500).json({ status: 500, error: error.code });
+    res.status(200).json({ status: 500, error: error.code });
   }
 }

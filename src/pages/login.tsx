@@ -39,8 +39,6 @@ const Login = () => {
     const email = emailRef.current!.value;
     const password = passwordRef.current!.value;
 
-    console.log(email, password);
-
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -55,11 +53,14 @@ const Login = () => {
       if (signIn.status === 500) {
         setError(true);
         setErrorMsg(signIn.error);
+        return;
       }
       setupUserInfo(signIn.userId);
       router.push("/");
     } catch (err: any) {
-      console.log("error", err);
+      console.log("error from login");
+      setError(true);
+      setErrorMsg("Their is some error. Please try again later");
     }
 
     passwordRef.current!.value = "";
@@ -124,7 +125,8 @@ const Login = () => {
 
             {error ? (
               <p className="error mt-6 rounded-lg bg-red-600 px-5 py-2 font-bold">
-                {FIREBASE_ERRORS[errorMsg as keyof typeof FIREBASE_ERRORS]}
+                {FIREBASE_ERRORS[errorMsg as keyof typeof FIREBASE_ERRORS] ||
+                  errorMsg}
               </p>
             ) : null}
 

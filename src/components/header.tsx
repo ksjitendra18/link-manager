@@ -41,7 +41,7 @@ const Header = () => {
     <header className="flex justify-between bg-primary h-[80px] text-white w-full p-5">
       <div className="logo">
         <Link href="/">
-          <h1 className="text-2xl font-bold">Link Shortener</h1>
+          <h1 className="text-2xl font-bold">Link Manager</h1>
         </Link>
       </div>
 
