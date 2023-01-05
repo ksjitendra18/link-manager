@@ -26,7 +26,7 @@ const AllLinks = () => {
   // const [links, setLinks] = useState<linkArray[] | DocumentData>([]);
   const userInfo = useUserStore((state) => state.userInfo);
   const router = useRouter();
-  console.log(userInfo);
+
   const fetchAllLinks = async () => {
     let linksArray: linkArray[] | DocumentData = [];
 
@@ -40,7 +40,6 @@ const AllLinks = () => {
       linksArray.push({ ...doc.data(), id: doc.id });
     });
 
-    console.log(linksArray);
     return linksArray;
   };
 
@@ -51,8 +50,6 @@ const AllLinks = () => {
   } = useSWR(userInfo ? "links" : null, fetchAllLinks, {
     revalidateOnFocus: false,
   });
-
-  console.log("userInfo", userInfo);
 
   const handleDelete = async (linkShortUrl: string) => {
     await deleteDoc(doc(db, userInfo!, linkShortUrl));

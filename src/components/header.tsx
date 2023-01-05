@@ -9,23 +9,29 @@ const Header = () => {
   const [openNav, setOpenNav] = useState(false);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    // await signOut(auth);
+    const res = await fetch("/api/auth/logout");
+    const data = await res.json();
+
     performLogout();
   };
 
-  // just a custom ListItem component
+  // just a custom ListItem component which return <li></li>
+  // this component is used only for mobile nav list items
   interface ListItemProps {
     children: React.ReactNode;
     className?: string | undefined;
+    onClick?: () => void;
   }
-  const ListItem = ({ className, children }: ListItemProps) => {
-    // return <li className={props.className}>{children}</li>;
-    console.log("props", className);
+  const ListItem = ({ className, onClick, children }: ListItemProps) => {
+    function listOnClick() {
+      setOpenNav(false);
+      if (onClick) {
+        onClick();
+      }
+    }
     return (
-      <li
-        className={className ? className : undefined}
-        onClick={() => setOpenNav(false)}
-      >
+      <li className={className ? className : undefined} onClick={listOnClick}>
         {children}
       </li>
     );
@@ -35,7 +41,7 @@ const Header = () => {
     <header className="flex justify-between bg-primary h-[80px] text-white w-full p-5">
       <div className="logo">
         <Link href="/">
-          <h1 className="text-2xl font-bold">Link Shortener</h1>
+          <h1 className="text-2xl font-bold">Link Manager</h1>
         </Link>
       </div>
 
@@ -80,19 +86,17 @@ const Header = () => {
             <li>
               <Link href="/">Home</Link>
             </li>
-            <li>About</li>
+            {/* <li>About</li> */}
             {userInfo !== null ? (
               <>
-                <li>
+                <ListItem>
                   <Link href="/links">Links</Link>
-                </li>
-                <li className="cursor-pointer" onClick={handleLogout}>
+                </ListItem>
+                <ListItem className="cursor-pointer" onClick={handleLogout}>
                   Logout
-                </li>
+                </ListItem>
               </>
             ) : (
-              // <li>
-              // </li>
               <ListItem>
                 <Link href="/login">Login</Link>
               </ListItem>
@@ -103,16 +107,4 @@ const Header = () => {
     </header>
   );
 };
-
-// // just a custom ListItem component
-// interface ListItemProps {
-//   children: React.ReactNode;
-//   className?: string | undefined;
-// }
-// const ListItem = ({ className, children }: ListItemProps) => {
-//   // return <li className={props.className}>{children}</li>;
-//   console.log("props", className);
-//   return <li className={className ? className : undefined} onClick={()=> }>{children}</li>;
-// };
-
 export default Header;

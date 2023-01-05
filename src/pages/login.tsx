@@ -1,15 +1,9 @@
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import Head from "next/head";
 import Link from "next/link";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { auth } from "../utils/firebase";
-import { useUserStore } from "../utils/userStore";
 import { useRouter } from "next/router";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Loading from "../components/loading";
+import { useUserStore } from "../utils/userStore";
 
 // this maps with firebase returned by firebase and
 // return custom error messages
@@ -45,16 +39,30 @@ const Login = () => {
     const email = emailRef.current!.value;
     const password = passwordRef.current!.value;
 
-    console.log(email, password);
-
     try {
-      const signin = await signInWithEmailAndPassword(auth, email, password);
-      setupUserInfo(signin.user.uid);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const signIn = await res.json();
+      console.log("signin data", signIn);
+
+      if (signIn.status === 500) {
+        setError(true);
+        setErrorMsg(signIn.error);
+        return;
+      }
+      setupUserInfo(signIn.userId);
       router.push("/");
     } catch (err: any) {
+      console.log("error from login");
       setError(true);
-      setErrorMsg(err.message);
+      setErrorMsg("Their is some error. Please try again later");
     }
+
     passwordRef.current!.value = "";
   };
 
@@ -117,7 +125,8 @@ const Login = () => {
 
             {error ? (
               <p className="error mt-6 rounded-lg bg-red-600 px-5 py-2 font-bold">
-                {FIREBASE_ERRORS[errorMsg as keyof typeof FIREBASE_ERRORS]}
+                {FIREBASE_ERRORS[errorMsg as keyof typeof FIREBASE_ERRORS] ||
+                  errorMsg}
               </p>
             ) : null}
 
