@@ -1,11 +1,8 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Loading from "../components/loading";
-import { auth, db } from "../utils/firebase";
 import { useUserStore } from "../utils/userStore";
 const Signup = () => {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -37,23 +34,17 @@ const Signup = () => {
     const password = passwordRef.current!.value;
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        name: userName,
-        email: email,
-        timeStamp: serverTimestamp(),
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          userName: userName,
+          email,
+          password,
+        }),
       });
-      setupUserInfo(userCredential.user.uid);
-
-      router.push("/");
-    } catch (err: any) {
-      throw new Error("Error at signup.", err);
-    }
+      const data = await res.json();
+      console.log("data", data);
+    } catch (e) {}
 
     nameRef.current!.value = "";
     emailRef.current!.value = "";
