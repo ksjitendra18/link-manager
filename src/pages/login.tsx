@@ -8,6 +8,8 @@ import { useUserStore } from "../utils/userStore";
 // this maps with firebase returned by firebase and
 // return custom error messages
 import { FIREBASE_ERRORS } from "../utils/firebaseErrors";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -40,23 +42,12 @@ const Login = () => {
     const password = passwordRef.current!.value;
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-      const signIn = await res.json();
-      console.log("signin data", signIn);
-
-      if (signIn.status === 500) {
-        setError(true);
-        setErrorMsg(signIn.error);
-        return;
-      }
-      setupUserInfo(signIn.userId);
-      router.push("/");
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setupUserInfo(userCredential.user.uid);
     } catch (err: any) {
       console.log("error from login");
       setError(true);

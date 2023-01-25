@@ -1,17 +1,15 @@
+import { signOut } from "firebase/auth";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useUserStore } from "../utils/userStore";
-import { signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useUserStore } from "../utils/userStore";
 const Header = () => {
   const userInfo = useUserStore((state) => state.userInfo);
   const performLogout = useUserStore((state) => state.performLogout);
   const [openNav, setOpenNav] = useState(false);
 
   const handleLogout = async () => {
-    // await signOut(auth);
-    const res = await fetch("/api/auth/logout");
-    const data = await res.json();
+    await signOut(auth);
 
     performLogout();
   };
