@@ -69,7 +69,7 @@ const AllLinks = () => {
           <div className=" flex  w-full">
             <div className="flex-1 ">
               <div className="h-[50px] flex items-center bg-[#374151] p-5">
-                <h2 className="text-[#9CA3AF] text-sm font-semibold uppercase">
+                <h2 className="text-[#9CA3AF] text-sm font-semibold uppercase select-none">
                   Short Link
                 </h2>
               </div>
@@ -88,7 +88,7 @@ const AllLinks = () => {
             </div>
             <div className="flex-1">
               <div className="h-[50px] flex  items-center bg-[#374151] ">
-                <h2 className="text-[#9CA3AF] text-sm font-semibold uppercase">
+                <h2 className="text-[#9CA3AF] text-sm font-semibold uppercase select-none">
                   Long Link
                 </h2>
               </div>
@@ -117,7 +117,7 @@ const AllLinks = () => {
                     className=" min-w-max  mr-2 link-item border-b-2  border-gray-700 my-3 pb-3"
                   >
                     <div className="flex gap-5 mr-5 cursor-pointer">
-                      <p
+                      <button
                         onClick={() =>
                           copyToClipboard(
                             `${window.location.origin}/link/${link.shortUrl}`
@@ -125,15 +125,15 @@ const AllLinks = () => {
                         }
                       >
                         Copy
-                      </p>
-                      <p>Edit</p>
-                      <p
+                      </button>
+                      <button>Edit</button>
+                      <button
                         onClick={() => {
                           handleDelete(link.shortUrl);
                         }}
                       >
                         Delete
-                      </p>
+                      </button>
                     </div>
                   </div>
                 ))}

@@ -5,6 +5,9 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Loading from "../components/loading";
 import { FIREBASE_ERRORS } from "../utils/firebaseErrors";
 import { useUserStore } from "../utils/userStore";
+import { auth, db } from "../utils/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 const Signup = () => {
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -38,21 +41,19 @@ const Signup = () => {
     const password = passwordRef.current!.value;
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          userName: userName,
-          email,
-          password,
-        }),
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        name: userName,
+        email: email,
+        timeStamp: serverTimestamp(),
       });
-      const signUpData = await res.json();
-      if (signUpData.status === 500) {
-        setError(true);
-        setErrorMsg(signUpData.error);
-        return;
-      }
-      setupUserInfo(signUpData.userId);
+
+      setupUserInfo(userCredential.user.uid);
       router.push("/");
     } catch (e) {
       console.log("error from signup");

@@ -35,17 +35,30 @@ const LinkShortener: React.FC = () => {
     const data = {
       originalUrl: urlValue,
       shortUrl: shortUrlId,
+      urlCreator: userInfo || "guest",
       createdAt: Timestamp.now(),
     };
 
     try {
-      if (userInfo) {
-        await setDoc(doc(db, userInfo!, shortUrlId), data);
-      }
-      await setDoc(doc(db, "links", shortUrlId), {
-        ...data,
-        userId: userInfo || "guest",
+      // if (userInfo) {
+      //   await setDoc(doc(db, userInfo!, shortUrlId), data);
+      // }
+      // await setDoc(doc(db, "links", shortUrlId), {
+      //   ...data,
+      //   userId: userInfo || "guest",
+      // });
+
+      const res = await fetch("/api/data/createLink", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
+
+      const resData = await res.json();
+
+      console.log("resdata", resData);
     } catch (err: any) {
       console.log("error from create new link", err, err.message);
     }
