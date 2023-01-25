@@ -5,11 +5,13 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { db } from "../utils/firebase";
 import { useUserStore } from "../utils/userStore";
 import copyToClipboard from "../utils/copyToClipboard";
+import { ResData } from "../utils/types/resDataType";
 
 const LinkShortener: React.FC = () => {
   const [generateUrl, setGenerateUrl] = useState<boolean>(false);
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [longUrl, setLongUrl] = useState<string | null>(null);
+  const [urlData, setUrlData] = useState<ResData>();
   const urlRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -40,14 +42,6 @@ const LinkShortener: React.FC = () => {
     };
 
     try {
-      // if (userInfo) {
-      //   await setDoc(doc(db, userInfo!, shortUrlId), data);
-      // }
-      // await setDoc(doc(db, "links", shortUrlId), {
-      //   ...data,
-      //   userId: userInfo || "guest",
-      // });
-
       const res = await fetch("/api/data/createLink", {
         method: "POST",
         headers: {
@@ -57,8 +51,9 @@ const LinkShortener: React.FC = () => {
       });
 
       const resData = await res.json();
+      console.log(resData.data);
 
-      console.log("resdata", resData);
+      setUrlData(resData.data);
     } catch (err: any) {
       console.log("error from create new link", err, err.message);
     }
@@ -67,9 +62,8 @@ const LinkShortener: React.FC = () => {
   };
 
   const onInputClick = () => {
-    console.log("clicked");
-
     setGenerateUrl(false);
+    setUrlData(undefined);
   };
   return (
     <div className="flex h-[calc(100vh-80px)] w-full p-5 bg-primary text-text items-center justify-center flex-col">
@@ -102,12 +96,12 @@ const LinkShortener: React.FC = () => {
         </form>
       </div>
 
-      {generateUrl ? (
+      {urlData ? (
         <div className="flex flex-col">
           <div className="mt-10 flex flex-col md:flex-row items-center gap-2 md:gap-5">
             <h3 className="font-bold text-2xl ">Long URL: </h3>
             <span className="text-xl md:text-2xl border-solid border-b-2 cursor-pointer border-secondary">
-              {longUrl}
+              {urlData!.originalUrl}
             </span>
           </div>
           <div className="mt-10 flex flex-col md:flex-row  items-center gap-2 md:gap-5">
@@ -116,7 +110,7 @@ const LinkShortener: React.FC = () => {
               className="text-xl md:text-2xl border-solid border-b-2 cursor-pointer border-secondary"
               onClick={() => copyToClipboard(shortUrl!)}
             >
-              {shortUrl}
+              {`${window.location.href}link/${urlData!.shortUrl}`}
             </span>
           </div>
         </div>

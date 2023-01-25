@@ -49,6 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
+
     console.log("Document data:", docSnap.data());
     return {
       redirect: {
