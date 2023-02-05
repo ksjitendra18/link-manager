@@ -8,6 +8,7 @@ import { useUserStore } from "../utils/userStore";
 import { auth, db } from "../utils/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { toast } from "react-toastify";
 const Signup = () => {
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -40,6 +41,7 @@ const Signup = () => {
     const email = emailRef.current!.value;
     const password = passwordRef.current!.value;
 
+    const signupToast = toast.loading("Signing up...");
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -54,9 +56,22 @@ const Signup = () => {
       });
 
       setupUserInfo(userCredential.user.uid);
+      toast.update(signupToast, {
+        render: "Signup Success",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+
       router.push("/");
     } catch (e) {
       console.log("error from signup");
+      toast.update(signupToast, {
+        render: "Something went wrong",
+        type: "error",
+        isLoading: false,
+        autoClose: 1500,
+      });
       setError(true);
       setErrorMsg("Their is some error. Please try again later");
     }
@@ -88,7 +103,7 @@ const Signup = () => {
             <h2 className="font-bold text-3xl text-center md:text-left">
               Signup{" "}
             </h2>
-            <form onSubmit={handleSignup} className="w-[90%]">
+            <form onSubmit={handleSignup} className="w-[95%]">
               <div className="mb-6 mt-10 ">
                 <label htmlFor="nameinput" className="block text-sm mb-1">
                   Name

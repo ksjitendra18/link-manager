@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Loading from "../components/loading";
 import { useUserStore } from "../utils/userStore";
-
+import { toast } from "react-toastify";
 // this maps with firebase returned by firebase and
 // return custom error messages
 import { FIREBASE_ERRORS } from "../utils/firebaseErrors";
@@ -17,6 +17,7 @@ const Login = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [userLoggedIn, setUserLoggedIn] = useState<boolean | null>(null);
+  const defaultErrorMessage = "Their is some error! Please try again later.";
 
   const setupUserInfo = useUserStore((state) => state.setUserInfo);
   const userInfo = useUserStore((state) => state.userInfo);
@@ -41,6 +42,7 @@ const Login = () => {
     const email = emailRef.current!.value;
     const password = passwordRef.current!.value;
 
+    const loginToast = toast.loading("Logging in...");
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -48,10 +50,24 @@ const Login = () => {
         password
       );
       setupUserInfo(userCredential.user.uid);
+      toast.update(loginToast, {
+        render: "Login Success",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+      router.push("/");
     } catch (err: any) {
       console.log("error from login");
+      toast.update(loginToast, {
+        render: "Login Failed",
+        type: "error",
+        isLoading: false,
+        autoClose: 1500,
+      });
       setError(true);
-      setErrorMsg("Their is some error. Please try again later");
+      setErrorMsg(err.code);
+      // setErrorMsg("Their is some error. Please try again later");
     }
 
     passwordRef.current!.value = "";
@@ -76,10 +92,10 @@ const Login = () => {
             <title>Login</title>
           </Head>
           <div className="  md:max-w-[800px]  form p-6 md:p-8 md:px-16 rounded-[6px] flex justify-center  flex-col bg-primary text-white  m-auto ">
-            <h2 className="font-bold text-3xl text-center md:text-left">
+            <h2 className="font-bold text-3xl text-center md:text-center">
               Login{" "}
             </h2>
-            <form onSubmit={handleLogin} className="w-[90%]">
+            <form onSubmit={handleLogin} className="w-[95%]">
               <div className="mb-6 mt-10">
                 <label htmlFor="emailinput" className="block text-sm mb-1">
                   Email
@@ -117,7 +133,7 @@ const Login = () => {
             {error ? (
               <p className="error mt-6 rounded-lg bg-red-600 px-5 py-2 font-bold">
                 {FIREBASE_ERRORS[errorMsg as keyof typeof FIREBASE_ERRORS] ||
-                  errorMsg}
+                  defaultErrorMessage}
               </p>
             ) : null}
 

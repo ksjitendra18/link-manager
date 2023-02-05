@@ -6,6 +6,7 @@ import { db } from "../utils/firebase";
 import { useUserStore } from "../utils/userStore";
 import copyToClipboard from "../utils/copyToClipboard";
 import { ResData } from "../utils/types/resDataType";
+import { toast } from "react-toastify";
 
 const LinkShortener: React.FC = () => {
   const [generateUrl, setGenerateUrl] = useState<boolean>(false);
@@ -19,6 +20,7 @@ const LinkShortener: React.FC = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const linkCreateToast = toast.loading("Creating Short Link...");
     setGenerateUrl(false);
     const urlValue = urlRef.current?.value;
     console.log(urlValue);
@@ -53,9 +55,21 @@ const LinkShortener: React.FC = () => {
       const resData = await res.json();
       console.log(resData.data);
 
+      toast.update(linkCreateToast, {
+        render: "Link Created Successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
       setUrlData(resData.data);
     } catch (err: any) {
       console.log("error from create new link", err, err.message);
+      toast.update(linkCreateToast, {
+        render: "Something went wrong!",
+        type: "error",
+        isLoading: false,
+        autoClose: 1500,
+      });
     }
 
     urlRef.current!.value = "";
